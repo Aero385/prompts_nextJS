@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 import PromptCard from './PromptCard'
 
 
-const PromptCardList = ({data, handleTagList}) => {
+const PromptCardList = ({data, handleTagClick}) => {
     return (
         <div className='mt-16 prompt_layout'>
             {data.map((post) => (
@@ -24,35 +24,37 @@ const Feed = () => {
 
     }
 
+    const fetchPosts = async () => {
+        const response = await fetch("/api/prompt");
+        const data = await response.json();
+
+        setPosts(data);
+      };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('/api/prompt')
-            const data = await response.json()
-            setPosts(data)
-        }
-        fetchData();
+        fetchPosts();
     }, []);
-    
 
-    return (
-        <section class='feed'>
-            <form className='relative w-full flex-center'>
-                <input
-                    type='text'
-                    className='search_input peer'
-                    required
-                    placeholder='Search for a tag or username'
-                    onChange={handleSearchChange}
-                    value={searchText}
+
+        return (
+            <section className='feed'>
+                <form className='relative w-full flex-center'>
+                    <input
+                        type='text'
+                        className='search_input peer'
+                        required
+                        placeholder='Search for a tag or username'
+                        onChange={handleSearchChange}
+                        value={searchText}
+                    />
+                </form>
+
+                <PromptCardList
+                    data={posts}
+                    handleTagClick={() => {}}
                 />
-            </form>
-
-            <PromptCardList
-                data={posts}
-                handleTagClick={() => {}}
-            />
-        </section>
-    );
+            </section>
+        );
 };
 
 export default Feed;
